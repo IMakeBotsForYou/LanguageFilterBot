@@ -1,0 +1,21 @@
+{
+  "prefix": "b/",
+  "token": "",
+  "permissions": "8",
+  "application_id": "461127894643507200",
+  "owners": [
+    327760224847003649,
+    591889695949193217
+  ],
+  "allowed_%_en": 0.50,
+  "allowed_%_jp": 0.35,
+  "allowed_min_en": 4,
+  "allowed_min_jp": 4,
+  "active_en_filters": [
+    946060955618517022
+  ],
+  "active_jp_filters": [
+    928310346622599279,
+    802123797791768587
+  ]
+}
