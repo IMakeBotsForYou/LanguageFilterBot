@@ -1,16 +1,36 @@
 import platform
 import discord
 import os
+import subprocess
 import json
+import sys
 from discord import app_commands, TextChannel
 from discord.ext import commands
 from discord.ext.commands import Context
 from helpers import is_owner, is_commands_channel, load_json
 
-
 class General(commands.Cog, name="general"):
     def __init__(self, bot):
         self.bot = bot
+        self.config = load_json("config.json")
+    
+    @commands.hybrid_command(
+        name="reload",
+        description="Restart the bot.",
+    )
+    @is_owner()
+    async def restart_bot(self, context) -> None:
+        # 雑な再起動機能
+
+        print("\n\n")
+        print("||||||||||||||||||||||||||||||||")
+        print("||||||||||| RESTART ||||||||||||")
+        print("||||||||||||||||||||||||||||||||")
+        print("\n\n")
+
+        await context.message.add_reaction("👍")
+        os.execv(sys.executable, ['py', 'main.py'])
+
 
     @commands.hybrid_command(
         name="filter",
