@@ -1,12 +1,13 @@
 import platform
 import sys
 import discord
+
 import asyncio
 from discord.ext import tasks
 import discord.ext.commands
 from discord.ext.commands import Bot, Context
 from helpers import *
-from time import time
+from time import time, ctime
 
 intents = discord.Intents.all()
 
@@ -132,7 +133,8 @@ async def on_message(message: discord.Message) -> None:
     ############################
     print(f"Registered {message.author}'s message in {channel_name}: '{content}'")
     msg = f"Len: {len(content)}  EN_CH: {en_ch}   JP_CH: {jp_ch}\n"
-    msg += f"JP%: {round(japanese_percent, 2)} EN%: {round(english_percent, 2)}"
+    msg += f"JP%: {round(japanese_percent, 2)} EN%: {round(english_percent, 2)}\n"
+    msg += ctime()
     print(msg)
     if message.channel.id not in last_sent:
         last_sent[message.channel.id] = 0
@@ -148,14 +150,14 @@ async def on_message(message: discord.Message) -> None:
 
         if english_percent > config["allowed_%_en"]:
             print(f"Deleting")
-            if time()-last_sent[message.channel.id]>5:
+            if time()-last_sent[message.channel.id] > config["warning_message_time"]:
                 embed = discord.Embed(
                     title="Shh!",
                     description=fr"This channel has a JP filter. To say something in english, use \|\|message\|\|",
                     color=0xCC11BB
                     )
                 last_sent[message.channel.id] = time()
-                await message.channel.send(embed=embed, delete_after=5)
+                await message.channel.send(embed=embed, delete_after=config["warning_message_time"])
             await message.delete()
             
 
@@ -168,17 +170,17 @@ async def on_message(message: discord.Message) -> None:
         if japanese_percent > config["allowed_%_jp"]:
             print(f"Deleting")
 
-            if time()-last_sent[message.channel.id]>5:
+            if time()-last_sent[message.channel.id]>config["warning_message_time"]:
                 embed = discord.Embed(
                     title="しーッ！",
                     description=fr"このチャンネルには英語フィルターが掛けてあります。　日本語で一言を言いたい場合は、 \|\|こうやってメッセージを隠してください。\|\|",
                     color=0xCC11BB
                     )
                 last_sent[message.channel.id] = time()
-                await message.channel.send(embed=embed, delete_after=5)
+                await message.channel.send(embed=embed, delete_after=config["warning_message_time"])
             await message.delete()
             
-            await asyncio.sleep(5)
+            await asyncio.sleep(config["warning_message_time"])
 
 
 # @bot.event
