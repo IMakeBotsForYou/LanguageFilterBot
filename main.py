@@ -1,14 +1,11 @@
 import platform
 import sys
-import discord
-
 import asyncio
 from discord.ext import tasks
 import discord.ext.commands
 from discord.ext.commands import Bot, Context
 from helpers import *
-from time import time, ctime
-
+from time import time
 intents = discord.Intents.all()
 
 bot = Bot(command_prefix=commands.when_mentioned_or(
@@ -75,67 +72,15 @@ async def on_message(message: discord.Message) -> None:
 
     if message.channel.id not in active_jp_filters and message.channel.id not in active_en_filters:
         return
-    #バカどもが「.」でスパムしてたから    
-    # if message.content == "." or message.content == "\\.":
-    #     await message.delete()
 
     if message.content.startswith("||") and message.content.endswith("||"):
         print(f"\nSpoiler message, ignoring!")
         return
     
-    print("\n\n")
 
-
-    # Filter through stuff that isn't actually characters
-    content = message.content
+    log(message)
     
 
-    ##################################
-    ######### KEEP TEXT ONLY #########
-    ##################################
-    fixed_content = find_emoji.sub('', content)
-    fixed_content = find_links.sub('', fixed_content)
-    fixed_content = find_characters.sub('', fixed_content)
-    
-
-    len_content = len(fixed_content)
-
-    #############################################
-    ######### FIND AMOUNT OF CHARACTERS #########
-    #############################################
-    doubleyous_search = search("[ｗw]+$", fixed_content)
-    if doubleyous_search:
-        ws = len(search("[ｗw]+$", fixed_content).group())
-    else:
-        ws = 0
-
-    en_ch = len(find_english.findall(fixed_content)) - ws
-
-    
-
-    jp_ch = len(find_japanese.findall(fixed_content)) + ws
-
-    len_content = 1 if len_content == 0 else len_content
-
-
-    #############################################
-    ######### FIND % OF CHARACTERS #########
-    #############################################
-    english_percent =   100 * en_ch / len_content
-    japanese_percent =  100 * jp_ch / len_content
-    # non_en_jp_percent = 1 - english_percent - japanese_percent
-    # Remove weird characters from channel name
-    channel_name = fix_channel_name(message.channel.name)
-    
-
-    ############################
-    ######### PRINTING #########
-    ############################
-    print(f"Registered {message.author}'s message in {channel_name}: '{content}'")
-    msg = f"Len: {len(content)}  EN_CH: {en_ch}   JP_CH: {jp_ch}\n"
-    msg += f"JP%: {round(japanese_percent, 2)} EN%: {round(english_percent, 2)}\n"
-    msg += ctime()
-    print(msg)
     if message.channel.id not in last_sent:
         last_sent[message.channel.id] = 0
 
