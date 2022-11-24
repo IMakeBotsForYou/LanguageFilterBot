@@ -73,12 +73,13 @@ async def on_message(message: discord.Message) -> None:
     if message.channel.id not in active_jp_filters and message.channel.id not in active_en_filters:
         return
 
-    if message.content.startswith("||") and message.content.endswith("||"):
-        print(f"\nSpoiler message, ignoring!")
-        return
+    # if message.content.startswith("||") and message.content.endswith("||"):
+    #     print(f"\nSpoiler message, ignoring!")
+    #     return
     
-
-    log(message)
+    en_ch, jp_ch, english_percent, japanese_percent = calculate_percentages(message)
+    channel_name = fix_channel_name(message.channel.name)
+    log(message.author, channel_name, message.content, en_ch, jp_ch, english_percent, japanese_percent)
     
 
     if message.channel.id not in last_sent:
@@ -90,7 +91,7 @@ async def on_message(message: discord.Message) -> None:
     if message.channel.id in active_jp_filters:
         # Beginner JPのチャンネルで、英語と日本語の割合が設定された割合を超えたら消す
         #４文字以内は許される
-        if en_ch < config["allowed_min_jp"]:
+        if en_ch < config["allowed_min_en"]:
             return
 
         if english_percent > config["allowed_%_en"]:
@@ -106,10 +107,11 @@ async def on_message(message: discord.Message) -> None:
             await message.delete()
             
 
+    # Delete JP
     if message.channel.id in active_en_filters:
         # Beginner ENもまた然り
         #３文字以内は許される
-        if jp_ch < config["allowed_min_en"]:
+        if jp_ch < config["allowed_min_jp"]:
             return
 
         if japanese_percent > config["allowed_%_jp"]:
