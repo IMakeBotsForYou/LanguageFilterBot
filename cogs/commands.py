@@ -49,8 +49,7 @@ class General(commands.Cog, name="general"):
         config = load_json("config.json")
 
         if action == "add":
-
-            if channel_id not in config[path]:
+            if channel_id in config[path]:
                 prefix = 'An' if filter_type == 'en' else 'A'
                 flag = '🇬🇧' if filter_type == 'en' else '🇯🇵'
                 await context.send(
@@ -60,7 +59,6 @@ class General(commands.Cog, name="general"):
                                        color=0xFF55BB,
                                        footer="No action was made.")
                     )
-
                 return
             else:
                 config[path].append(channel_id)
