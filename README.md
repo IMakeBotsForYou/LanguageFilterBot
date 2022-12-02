@@ -5,5 +5,6 @@ A language filter for discord, restricting channels to a specific language
 
 ## Commands
  b/filter add #channel <en/jp>
+ 
  b/filter remove #channel <en/jp>
  
