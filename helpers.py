@@ -10,7 +10,7 @@ from discord.ext.commands import Context
 
 # ディスコードでは、絵文字は 「 <a:名前:ID 」 もしくは 「 <:名前:ID 」
 # のように表示される。　GIFの場合はAnimationのAがつく
-find_emoji = compile(r'(?:<a:)|(?:<:)\w+:\d+>')
+find_emoji = compile(r'<a?:\w+:\d+>')
 
 # 英語のアルファベット
 find_english = compile(r"[a-zA-Z]")
@@ -24,11 +24,10 @@ find_english = compile(r"[a-zA-Z]")
 # CJK unifed ideographs "一-齢"
 find_japanese = compile(r"[、-〽ぁ-ゟ゠-ヿ｡-ﾟ一-齢]")
 
-
 # 特別キャラクター
-find_characters = compile(r"[0-9?><;,.{}[\]\-_+=!@#$%\^&*|'、ー ]")
+find_characters = compile(r"[0-9?><;,.{}[\]\-_+=~!@#$%\^&*|'、ー ]")
 
-# リンクのフィルター。　http, あるいは https のあとにどんな文字が付こうが入る
+# リンクのフィルター。　
 find_links = compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
 
 # ネタベレメッセージ、隠れたメッセージ
@@ -63,6 +62,7 @@ def calculate_percentages(message: discord.Message) -> tuple:
     ######### KEEP TEXT ONLY #########
     ##################################
     fixed_content = find_emoji.sub('', content)
+    fixed_content = find_spoilers.sub('', fixed_content)
     fixed_content = find_links.sub('', fixed_content)
     fixed_content = find_characters.sub('', fixed_content)
     fixed_content = find_spoilers.sub('', fixed_content)
