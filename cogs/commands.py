@@ -7,7 +7,11 @@ import sys
 from discord import app_commands, TextChannel
 from discord.ext import commands
 from discord.ext.commands import Context
-from helpers import is_owner, is_commands_channel, load_json
+from helpers import is_owner, is_commands_channel, load_json, simple_embed
+
+
+
+
 
 class General(commands.Cog, name="general"):
     def __init__(self, bot):
@@ -43,25 +47,52 @@ class General(commands.Cog, name="general"):
         channel_id = channel.id
 
         config = load_json("config.json")
-        if action == "add" and channel_id not in config[path]:
-            config[path].append(channel_id)
+
+        if action == "add":
+
+            if channel_id not in config[path]:
+                prefix = 'An' if filter_type == 'en' else 'A'
+                flag = '🇬🇧' if filter_type == 'en' else '🇯🇵'
+                await context.send(
+                    embed=simple_embed(title="Error.", 
+                                       description=f"{prefix} {filter_type.upper()} {flag}  \
+                                                    filter was already set in {channel.name}", \
+                                       color=0xFF55BB,
+                                       footer="No action was made.")
+                    )
+
+                return
+            else:
+                config[path].append(channel_id)
 
         elif action == "remove":
-            config[path].remove(channel_id)
+
+            try:
+                config[path].remove(channel_id)
+            except ValueError:
+                prefix = 'An' if filter_type == 'en' else 'A'
+                flag = '🇬🇧' if filter_type == 'en' else '🇯🇵'
+                await context.send(
+                    embed=simple_embed(title="Error.", 
+                                       description=f"{prefix} {filter_type.upper()} {flag}  \
+                                                    filter was not set in {channel.name}", \
+                                       color=0xFF55BB,
+                                       footer="No action was made.")
+                    )
+
+                return
+
         with open("config.json", "w") as f:
             json.dump(config, f, indent=2)
 
         config = load_json("config.json")
-
-        embed = discord.Embed(
-            title="Success!",
-            description=f"{'Added' if action == 'add' else 'Removed'} \
-                          {filter_type} filter \
-                          {'to' if action == 'add' else 'from'} \
-                          {channel.name}!",
-            color=0x90FF99
-        )
-        await context.send(embed=embed)
+        embed = simple_embed(title="Success!",
+                             description=f"{'Added' if action == 'add' else 'Removed'} \
+                                        {filter_type} filter \
+                                        {'to' if action == 'add' else 'from'} \
+                                        {channel.name}!",
+                             color=0x90FF99)
+        await context.send(embed)
 
     @commands.hybrid_command(
         name="ping",

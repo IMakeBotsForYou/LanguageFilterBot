@@ -130,15 +130,24 @@ async def on_message(message: discord.Message) -> None:
             await asyncio.sleep(config["warning_message_time"])
 
 
-# @bot.event
-# async def on_command_error(context: Context, error) -> None:
-#     """
-#     The code in this event is executed every time a normal valid command catches an error
-#     :param context: The context of the normal command that failed executing.
-#     :param error: The error that has been faced.
-#     """
-#     msg = context.message
-#     if isinstance(error, commands.CheckFailure):
-#         print(f"{msg.author} tried running \"{msg.content}\"\nFailed.\n")
+@bot.event
+async def on_command_error(context: Context, error) -> None:
+    """
+    The code in this event is executed every time a normal valid command catches an error
+    :param context: The context of the normal command that failed executing.
+    :param error: The error that has been faced.
+    """
+
+    msg = context.message
+    channel = context.message.channel
+
+    if isinstance(error, commands.CheckFailure):
+        print(f"{msg.author} tried running \"{msg.content}\"\nFailed.\n")
+    else:
+        embed = simple_embed(title="Error.",
+                             description=f"{error}",
+                             footer=f"{type(error)}",
+                             color=0xFF55BB)
+        await context.send(embed=embed)
 
 bot.run(config["token"])
