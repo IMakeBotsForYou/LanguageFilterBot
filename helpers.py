@@ -149,7 +149,7 @@ def simple_embed(title, description, color=0xAABBBB, footer=""):
     embed = discord.Embed(
         title=title,
         description=description,
-        color=color,
+        color=color
     )
     if footer:
         embed.set_footer(text=footer)

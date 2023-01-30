@@ -1,4 +1,3 @@
-import platform
 import discord
 import os
 import subprocess
@@ -33,7 +32,7 @@ class General(commands.Cog, name="general"):
         print("\n\n")
 
         await context.message.add_reaction("👍")
-        os.execv(sys.executable, ['py', 'main.py'])
+        os.execv(sys.executable, ['py', 'app.py'])
 
 
     @commands.hybrid_command(
@@ -41,9 +40,12 @@ class General(commands.Cog, name="general"):
         description="Check if the bot is alive.",
     )
     @is_owner()
-    async def filter(self, context, action: str, channel: discord.TextChannel, filter_type: str) -> None:
+    async def filter(self, context, action: str, channel: discord.TextChannel, filter_type: str = "") -> None:
         global config
-        path = f"active_{filter_type}_filters"
+        pathen = f"active_en_filters"
+        pathjp = f"active_jp_filters"
+        path = pathen if filter_type == 'en' else pathjp
+
         channel_id = channel.id
 
         config = load_json("config.json")
@@ -64,12 +66,11 @@ class General(commands.Cog, name="general"):
                 config[path].append(channel_id)
 
         elif action == "remove":
-
-            try:
-                config[path].remove(channel_id)
-            except ValueError:
-                prefix = 'An' if filter_type == 'en' else 'A'
-                flag = '🇬🇧' if filter_type == 'en' else '🇯🇵'
+            if channel_id in config[pathen]:
+                config[pathen].remove(channel_id)
+            elif channel_id in config[pathjp]:
+                config[pathjp].remove(channel_id)
+            else:
                 await context.send(
                     embed=simple_embed(title="Error.", 
                                        description=f"{prefix} {filter_type.upper()} {flag}  \
@@ -77,7 +78,6 @@ class General(commands.Cog, name="general"):
                                        color=0xFF55BB,
                                        footer="No action was made.")
                     )
-
                 return
 
         with open("config.json", "w") as f:
@@ -90,7 +90,7 @@ class General(commands.Cog, name="general"):
                                         {'to' if action == 'add' else 'from'} \
                                         {channel.name}!",
                              color=0x90FF99)
-        await context.send(embed)
+        await context.send(embed=embed)
 
     @commands.hybrid_command(
         name="ping",

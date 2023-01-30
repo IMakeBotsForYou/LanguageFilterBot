@@ -61,6 +61,10 @@ async def on_message(message: discord.Message) -> None:
 
     await bot.process_commands(message)
 
+    if message.channel.id == 772882331744337936 and "sus " in message.content:
+        await message.delete()
+        return
+
     # jp_id = 928310346622599279
     # en_id = 946060955618517022
     # zatudan_id = 802123797791768587
@@ -126,8 +130,6 @@ async def on_message(message: discord.Message) -> None:
                 last_sent[message.channel.id] = time()
                 await message.channel.send(embed=embed, delete_after=config["warning_message_time"])
             await message.delete()
-            
-            await asyncio.sleep(config["warning_message_time"])
 
 
 @bot.event
@@ -143,6 +145,8 @@ async def on_command_error(context: Context, error) -> None:
 
     if isinstance(error, commands.CheckFailure):
         print(f"{msg.author} tried running \"{msg.content}\"\nFailed.\n")
+    elif isinstance(error, commands.CommandNotFound):
+        pass
     else:
         embed = simple_embed(title="Error.",
                              description=f"{error}",
@@ -151,3 +155,4 @@ async def on_command_error(context: Context, error) -> None:
         await context.send(embed=embed)
 
 bot.run(config["token"])
+

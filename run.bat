@@ -1,1 +1,1 @@
-py main.py
+powershell.exe -ExecutionPolicy Unrestricted -Command "py main.py"
