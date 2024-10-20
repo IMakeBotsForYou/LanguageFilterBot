@@ -1,23 +1,23 @@
 {
   "prefix": "b/",
-  "token": "",
+  "token": "mytoken",
   "permissions": "8",
-  "application_id": "461127894643507200",
+  "application_id": "",
   "owners": [
-    327760224847003649,
-    591889695949193217
+
   ],
-  "allowed_%_en": 50,
+  "allowed_%_en": 65,
   "allowed_%_jp": 35,
   "allowed_min_en": 4,
   "allowed_min_jp": 4,
-  "warning_message_time": 5,
+  "warning_message_time": 15,
   "active_en_filters": [
-    946060955618517022,
-    1045216093490380801
+
   ],
   "active_jp_filters": [
-    928310346622599279,
-    802123797791768587
+
+  ],
+  "bot_channels": [
+
   ]
 }
