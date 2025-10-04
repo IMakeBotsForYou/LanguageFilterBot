@@ -129,7 +129,7 @@ class Reminder(commands.Cog):
 
     @group.command(name="remove", description="Remove a reminder by its ID.")
     @app_commands.describe(reminder_id='Reminder ID')
-    async def remove_reminder(self, interaction: Interaction, reminder_id: int):
+    async def remove_reminder(self, interaction: Interaction, reminder_id: str):
         """Remove an existing reminder by its ID."""
         await interaction.response.defer()
 
@@ -196,9 +196,12 @@ class Reminder(commands.Cog):
                     
                     if channel and user:
                         await channel.send(f"{user.mention}, {reminder['text']} {next_time_str}")
-
                     else:
                         reminders.remove(reminder)
+
+                    if not reminder["repeat"]:
+                        reminders.remove(reminder)
+
 
         self.save_reminders()
 

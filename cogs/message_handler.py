@@ -30,6 +30,11 @@ class MessageHandler(commands.Cog):
         # Handle Direct Messages
         if not message.guild:
             print(f"DM by: {message.author.name} @ {ctime()}: {message.content}")
+            if message.attachments:
+                for attachment in message.attachments:
+                    url = attachment.url
+                    if url[0:26] == 'https://cdn.discordapp.com':
+                        print(url)
             return
 
         # Skip staff channels based on category
@@ -39,12 +44,13 @@ class MessageHandler(commands.Cog):
         # Initialize channel's last sent message time if it doesn't exist
         if message.channel.id not in self.last_sent:
             self.last_sent[message.channel.id] = 0
+        # Beat saber
+        if message.guild.id != 1291018038690451478:
+            # Apply foreign language filtering
+            await self.apply_foreign_language_filter(message)
 
-        # Apply foreign language filtering
-        await self.apply_foreign_language_filter(message)
-
-        # Apply channel-specific language filters
-        await self.apply_language_filters(message)
+            # Apply channel-specific language filters
+            await self.apply_language_filters(message)
 
     async def apply_foreign_language_filter(self, message):
         """Checks if the message contains too much foreign language content and deletes it if needed."""
@@ -71,14 +77,17 @@ class MessageHandler(commands.Cog):
 
         # Calculate percentages of English and Japanese in the message
         en_ch, jp_ch, en_percent, jp_percent, foreign_percentage, _ = calculate_percentages(message)
-
         # Apply English filter on JP channels
+        # print(f"{en_ch=}, {jp_ch=}, {en_percent=}, {jp_percent=}, {foreign_percentage=}")
         if message.channel.id in jp_filters and en_percent > self.bot.config["allowed_%_en"] and en_ch > self.bot.config["allowed_min_en"]:
             await self.delete_with_warning(
                 message,
                 title="Shh!",
                 description="This channel has a JP filter. Use ||spoiler tags|| for English."
             )
+            print(f"{en_ch=} (MAX: {self.bot.config['allowed_min_en']}), {jp_ch=}, {en_percent=} (MAX:{self.bot.config['allowed_%_en']}), {jp_percent=}, {foreign_percentage=}")
+            print(f"Deleted message by {message.author.name}({message.author.id}):\n{message.content}")
+
 
         # Apply Japanese filter on EN channels
         elif message.channel.id in en_filters and jp_percent > self.bot.config["allowed_%_jp"] and jp_ch > self.bot.config["allowed_min_jp"]:

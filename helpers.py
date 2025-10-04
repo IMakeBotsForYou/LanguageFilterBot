@@ -118,9 +118,9 @@ def calculate_percentages(message: discord.Message) -> tuple:
     len_content = max(1, len_content)  # Prevent division by zero
 
     # Calculate percentages
-    english_percent =  en_chars / len_content
-    japanese_percent = jp_chars / len_content
-    foreign_percent =  foreign_chars / len_content
+    english_percent =  round(en_chars / len_content, 2)
+    japanese_percent = round(jp_chars / len_content)
+    foreign_percent =  round(foreign_chars / len_content)
     return en_chars, jp_chars, english_percent, japanese_percent, foreign_percent, language_chars
 
 
@@ -169,13 +169,14 @@ def is_owner() -> Callable[[T], T]:
     """Custom decorator to check if the command executor is the bot owner."""
     async def predicate(ctx: commands.Context) -> bool:
         owners = load_json("config.json")["owners"]
+        print(ctx.message.author.id, owner, ctx.message.author.id in owners)
         return ctx.message.author.id in owners
     return commands.check(predicate)
 
 
 def is_commands_channel() -> Callable[[T], T]:
     """Custom decorator to check if the command is executed in a specific bot channel."""
-    bot_channels = [778209104300212234, 785118485377974282, 1291049930114207754]
+    bot_channels = load_json("config.json")["bot_channels"]
     async def predicate(ctx: commands.Context) -> bool:
         return ctx.channel.id in bot_channels
     return commands.check(predicate)
